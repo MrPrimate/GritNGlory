@@ -1,0 +1,41 @@
+{
+  "name": "GritNGlory",
+  "title": "Grit & Glory",
+  "license": "MIT License",
+  "description": "A module to implement Grit & Glory optional rules from https://www.reddit.com/r/gritandglory5e/comments/empff0/grit_and_glory_v6_100_pages_of_dd_5e_rules_for/",
+  "version": "VERSION",
+  "download": "https://github.com/mrprimate/GritNGlory/releases/download/VERSION/GritNGlory.zip",
+  "manifest": "https://github.com/mrprimate/GritNGlory/releases/download/latest/module.json",
+  "readme": "https://github.com/MrPrimate/GritNGlory/blob/main/README.md",
+  "changelog": "https://github.com/MrPrimate/GritNGlory/blob/main/CHANGELOG.md",
+  "url": "https://github.com/mrprimate/GritNGlory",
+  "library": "false",
+  "manifestPlusVersion": "1.0.0",
+  "minimumCoreVersion": "9",
+  "compatibleCoreVersion": "9",
+  "authors": [
+    {
+      "name": "MrPrimate",
+      "url": "https://github.com/MrPrimate",
+      "discord": "MrPrimate#8701"
+    }
+  ],
+  "system": ["dnd5e"],
+  "dependencies": [
+    {
+      "name": "lib-wrapper"
+    }
+  ],
+  "conflicts": [],
+  "esmodules": ["src/module.js"],
+  "scripts": [],
+  "styles": ["styles/module.css"],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "languages/en.json"
+    }
+  ],
+  "media": []
+}
