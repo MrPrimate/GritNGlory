@@ -1,7 +1,9 @@
-import { registerSettings } from "./hooks/settings.js";
-import { registerLibwrappers } from "./hooks/libwrapper.js";
 import logger from "./logger.js";
 import CONSTANTS from "./constants.js";
+import { registerSettings } from "./hooks/settings.js";
+import { registerLibwrappers } from "./hooks/libwrapper.js";
+import { registerCharacterHooks } from "./hooks/character.js";
+import { registerWindowFunctions } from "./hooks/window.js";
 
 Hooks.once("init", () => {
   registerSettings();
@@ -14,5 +16,12 @@ Hooks.once("ready", () => {
   } else {
     logger.debug("Registering libWrapper wrappers");
     registerLibwrappers();
+
+    const woundsEnabled = game.settings.get(CONSTANTS.MODULE_NAME, CONSTANTS.SETTINGS.ENABLE_WOUNDS);
+    if (woundsEnabled) {
+      registerCharacterHooks();
+    }
+
+    registerWindowFunctions();
   }
 });

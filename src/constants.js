@@ -1,3 +1,5 @@
+const debouncedReload = foundry.utils.debounce(() => window.location.reload(), 100);
+
 const CONSTANTS = {
   MODULE_NAME: "GritNGlory",
   MODULE_FULL_NAME: "GritNGlory.ModuleName",
@@ -11,6 +13,10 @@ const CONSTANTS = {
   GET_DEFAULT_SETTINGS() {
     return foundry.utils.deepClone(CONSTANTS.DEFAULT_SETTINGS);
   },
+
+  WOUNDS: {
+    MINIMUM_OPEN_WOUNDS: 3,
+  },
 };
 
 CONSTANTS.DEFAULT_SETTINGS = {
@@ -22,6 +28,7 @@ CONSTANTS.DEFAULT_SETTINGS = {
     config: true,
     type: Boolean,
     default: false,
+    onChange: debouncedReload,
   },
 
 

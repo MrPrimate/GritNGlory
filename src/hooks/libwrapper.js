@@ -1,5 +1,5 @@
-import CONSTANTS from "../../constants.js";
-import logger from "../../logger.js";
+import CONSTANTS from "../constants.js";
+import logger from "../logger.js";
 
 
 async function patchShortRest(wrapped, ...args) {
