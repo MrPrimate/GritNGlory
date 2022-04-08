@@ -1,4 +1,5 @@
 import CONSTANTS from "./constants.js";
+import utils from "./utils.js";
 
 const logger = {
   _showMessage: (logLevel, data) => {
@@ -6,7 +7,7 @@ const logger = {
       return false;
     }
 
-    const setting = game.settings.get(CONSTANTS.MODULE_NAME, CONSTANTS.SETTINGS.LOG_LEVEL);
+    const setting = utils.setting(CONSTANTS.SETTINGS.LOG_LEVEL);
     const logLevels = ["DEBUG", "INFO", "WARN", "ERR", "OFF"];
     const logLevelIndex = logLevels.indexOf(logLevel.toUpperCase());
     if (setting == "OFF" ||

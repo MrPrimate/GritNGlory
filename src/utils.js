@@ -1,17 +1,26 @@
 import CONSTANTS from "./constants.js";
+import logger from "./logger.js";
 
 const utils = {
 
-  firstGM: () =>{
-    return game.users.find(u => u.isGM && u.active);
+  setting: (key) => {
+    return game.settings.get(CONSTANTS.MODULE_NAME, key);
+  },
+
+  updateSetting: async (key, value) => {
+    return game.settings.set(CONSTANTS.MODULE_NAME, key, value);
+  },
+
+  firstGM: () => {
+    return game.users.find((user) => user.isGM && user.active);
   },
 
   isFirstGM: () => {
     return game.user.id === utils.firstGM()?.id;
   },
 
-  resetInjuryTokens: (flags) => {
-    flags.injury.tokens = {
+  getDefaultInjuryTokens: () => {
+    return {
       piercing: 0,
       bludgeoning: 0,
       slashing: 0,
@@ -26,7 +35,6 @@ const utils = {
       force: 0,
       psychic: 0,
     };
-    return flags;
   },
 
   getFlags: (actor) => {
@@ -38,18 +46,17 @@ const utils = {
         total: 0,
       },
       injury: {
-        tokens: utils.resetInjuryTokens(),
+        tokens: utils.getDefaultInjuryTokens(),
         list: [],
       },
       bleeding: false,
     };
-    console.warn(flags);
     if (game.combat && game.combat.id !== flags.openWounds.combatId) {
       flags.openWounds.combatId = game.combat.id;
       flags.openWounds.combat = 0;
       flags.woundRisks = 0;
       flags.bleeding = false;
-      flags.injury.tokens = utils.resetInjuryTokens();
+      flags.injury.tokens = utils.getDefaultInjuryTokens();
     } else if (!game.combat?.current?.round) {
       flags.openWounds.combatId = null;
     }
@@ -67,17 +74,21 @@ const utils = {
     return utils.setFlags(actor, undefined);
   },
 
-  openWoundCheck: (actor, flags) => {
-    const maxOpenWounds = Math.max(actor.data.data.abilities.con.mod + Math.floor(actor.data.data.details.level / 2), 3);
-    console.warn("maxOpenWounds", maxOpenWounds);
-    if (flags.openWounds.total >= maxOpenWounds) {
-      let content = `${actor.name} has now suffered ${flags.openWounds.total} Open Wounds. The are now unconscious.`;
-      ChatMessage.create({ content });
-      if (game.modules.get("dfreds-convenient-effects")?.active) {
-        game.dfreds.effectInterface.addEffect({ effectName: "Unconscious", uuid: actor.uuid });
+  wounds: {
+    openWoundCheck: (actor, flags) => {
+      logger.debug(`${actor.name} has checking open wounds.`);
+      const maxOpenWounds = Math.max(actor.data.data.abilities.con.mod + Math.floor(actor.data.data.details.level / 2), 3);
+      console.warn("maxOpenWounds", maxOpenWounds);
+      if (flags.openWounds.total >= maxOpenWounds) {
+        let content = `${actor.name} has now suffered ${flags.openWounds.total} Open Wounds. The are now unconscious.`;
+        ChatMessage.create({ content });
+        if (game.modules.get("dfreds-convenient-effects")?.active) {
+          game.dfreds.effectInterface.addEffect({ effectName: "Unconscious", uuid: actor.uuid });
+        }
       }
-    }
+    },
   },
+
 
 };
 

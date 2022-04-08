@@ -1,4 +1,5 @@
-const MINIMUM_OPEN_WOUNDS = 3;
+import utils from "../utils.js";
+import CONSTANTS from "../constants.js";
 
 
 function isTurnChange(combat, changed) {
@@ -9,49 +10,82 @@ function isTurnChange(combat, changed) {
   return isCombat && hasCombatants && !firstTurn;
 }
 
+async function confirmationRoll(actor) {
+  const data = {
+    name: "Confirmation Roll",
+    type: "feat",
+    data: {
+      "activation.type": "special",
+      "duration.units": "inst",
+      "target.type": "self",
+      "range.units": "self",
+      "actionType": "save",
+      save: {
+        "ability": "con",
+        "dc": 12 + utils.getFlags(actor).woundRisks,
+        "scaling": "flat"
+      },
+    },
+  };
+  // const item = new Item(data, { temp: true });
 
-function updateCombat(combat, changed) {
+
+  const saveTargets = [...game.user?.targets].map((t )=> t.id);
+  game.user.updateTokenTargets([targetToken.id]);
+  const saveItem = new CONFIG.Item.documentClass(data, { parent: caster });
+  const options = { showFullCard: false, createWorkflow: true, configureDialog: true };
+  const result = await MidiQOL.completeItemRoll(saveItem, options);
+
+  game.user.updateTokenTargets(saveTargets);
+  // const failedSaves = [...result.failedSaves];
+  // if (failedSaves.length > 0) {
+  //   await game.dfreds.effectInterface.addEffect({ effectName: condition, uuid: failedSaves[0].document.uuid });
+  // }
+  console.warn("result", result);
+  return result;
+}
+
+
+async function updateCombat(combat, changed) {
   if (!isTurnChange(combat, changed)) return;
 
   const previousId = combat.previous?.combatantId;
 
-  /* run the leg action helper dialog if enabled */
-  if (MODULE.setting('legendaryActionHelper')) {
+  if (utils.setting(CONSTANTS.SETTINGS.ENABLE_WOUNDS)) {
+    const charactersToCheck = combat.data.combatants.filter((c) =>
+      c.actor.type === "character" && utils.getFlags(c.actor).woundRisks > 0
+    );
 
-    /* Collect legendary combatants (but not the combatant whose turn just ended) */
-    let legendaryCombatants = combat.combatants.filter( combatant => combatant.getFlag(MODULE.data.name, 'hasLegendary') && combatant.id != previousId );
+    // confirmation roll
+    for (let i = 0; i < charactersToCheck.length; i++) {
+      const character = charactersToCheck[i];
+      const flags = utils.getFlags(character.actor);
+      const result = await confirmationRoll(character.actor);
 
-    /* only prompt for actions from alive creatures with leg acts remaining */
-    legendaryCombatants = legendaryCombatants.filter( combatant => getProperty(combatant.actor, 'data.data.resources.legact.value') ?? 0 > 0 );
-    legendaryCombatants = legendaryCombatants.filter( combatant => getProperty(combatant.actor, 'data.data.attributes.hp.value') ?? 0 > 0 );
-
-    /* send list of combantants to the action dialog subclass */
-    if (legendaryCombatants.length > 0) {
-      LegendaryActionManagement.showLegendaryActions(legendaryCombatants);
-    }
-
-  }
-
-  /* recharge the legendary actions, if enabled */
-  if (MODULE.setting('legendaryActionRecharge')) {
-
-    /* once the dialog for the "in-between" turn has been rendered, recharge legendary actions
-     * for the creature whose turn just ended. This is not entirely RAW, but due to order
-     * of operations it must be done 'late'. Since a creature cannot use a legendary
-     * action at the end of its own turn, nor on its own turn, recharging at end of turn
-     * rather than beginning of turn is functionally equivalent. */
-    if (previousId) {
-
-      /* does the previous combatant have legendary actions? */
-      const previousCombatant = combat.combatants.get(previousId);
-      if(!!previousCombatant?.getFlag(MODULE.data.name, 'hasLegendary')) {
-        LegendaryActionManagement.rechargeLegendaryActions(previousCombatant);
+      if (result.failure) {
+        flags.openWounds.combat += 1;
+        flags.openWounds.total += 1;
+        flags.bleeding = true;
       }
+
+      flags.woundRisks = 0;
+      await utils.setFlags(character.actor, flags);
     }
+
+    // TODO: bleeding check
 
   }
 }
 
+
+function deleteCombat(combat, changed) {
+  // injuries
+
+}
+
 export function trackerHooks() {
-  Hooks.on('updateCombat', updateCombat);
+  if (utils.isFirstGM()) {
+    Hooks.on('updateCombat', updateCombat);
+    Hooks.on('deleteCombat', deleteCombat);
+  }
 }

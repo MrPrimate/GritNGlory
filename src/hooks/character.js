@@ -36,7 +36,7 @@ async function preUpdateActorHook(actor, update) {
     console.warn(actor);
     console.warn(update);
     const currentCombat = game.combat?.current?.round;
-    const woundsEnabled = game.settings.get(CONSTANTS.MODULE_NAME, CONSTANTS.SETTINGS.ENABLE_WOUNDS);
+    const woundsEnabled = utils.setting(CONSTANTS.SETTINGS.ENABLE_WOUNDS);
     if (Number.isInteger(currentCombat) && woundsEnabled && actor.type === "character" && update.data?.attributes?.hp) {
       logger.debug("Checking wound threshold");
       const removedHitPoints = actor.data.data.attributes.hp.value - update.data.attributes.hp.value;
@@ -54,12 +54,13 @@ async function preUpdateActorHook(actor, update) {
           flags.openWounds.total += 1;
           content += `<br> ${actor.name} has suffered an Open Wound. Their Open Wounds this combat are ${flags.openWounds.combat}.`;
           content += `<br> Their current total Open Wounds are ${flags.openWounds.total}.`;
+          content += `<br> They take an injury token for this damage type.`;
           // TODO: handle injury token addition - pop up or chat diaglog?
         }
 
         utils.setFlags(actor, flags);
         ChatMessage.create({ content });
-        utils.openWoundCheck(actor, flags);
+        utils.wounds.openWoundCheck(actor, flags);
         console.warn("flags", flags);
 
       }

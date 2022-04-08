@@ -24,6 +24,9 @@
   "dependencies": [
     {
       "name": "lib-wrapper"
+    },
+    {
+      "name": "midi-qol"
     }
   ],
   "conflicts": [],
