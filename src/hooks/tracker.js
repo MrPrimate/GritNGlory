@@ -60,6 +60,7 @@ async function updateCombat(combat, changed) {
     for (let i = 0; i < charactersToCheck.length; i++) {
       const character = charactersToCheck[i];
       const flags = utils.getFlags(character.actor);
+      // eslint-disable-next-line no-await-in-loop
       const result = await confirmationRoll(character.actor);
 
       if (result.failure) {
@@ -69,6 +70,7 @@ async function updateCombat(combat, changed) {
       }
 
       flags.woundRisks = 0;
+      // eslint-disable-next-line no-await-in-loop
       await utils.setFlags(character.actor, flags);
     }
 
