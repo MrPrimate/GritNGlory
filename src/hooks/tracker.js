@@ -85,9 +85,11 @@ function deleteCombat(combat, changed) {
 
 }
 
-export function trackerHooks() {
+
+export function registerTrackerHooks() {
   if (utils.isFirstGM()) {
     Hooks.on('updateCombat', updateCombat);
     Hooks.on('deleteCombat', deleteCombat);
+
   }
 }

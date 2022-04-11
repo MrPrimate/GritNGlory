@@ -50,6 +50,7 @@ const utils = {
         list: [],
       },
       bleeding: false,
+      turnDamage: [],
     };
     if (game.combat && game.combat.id !== flags.openWounds.combatId) {
       flags.openWounds.combatId = game.combat.id;
@@ -57,6 +58,7 @@ const utils = {
       flags.woundRisks = 0;
       flags.bleeding = false;
       flags.injury.tokens = utils.getDefaultInjuryTokens();
+      flags.turnDamage = [];
     } else if (!game.combat?.current?.round) {
       flags.openWounds.combatId = null;
     }
