@@ -2,7 +2,6 @@ import CONSTANTS from "../constants.js";
 import logger from "../logger.js";
 import utils from "../utils.js";
 
-
 // To represent actual bodily trauma, Grit and Glory uses what is called 'Wound Thresholds' and 'Wound Risks'.
 
 // A creature's Wound Threshold is equal to 12 + their Constitution modifier and represents how tough they are
@@ -25,62 +24,82 @@ import utils from "../utils.js";
 // Any time you take damage that is equal or greater than x2 your Wound Threshold, you
 // automatically suffer an Open Wound and you take an Injury token (pg. 9).
 
-function getInjuryToken(flags) {
-
-}
-
 
 async function preUpdateActorHook(actor, update) {
-  return new Promise((resolve, reject) => {
+  console.warn(actor);
+  console.warn(update);
+  const currentCombat = game.combat?.current?.round;
+  const woundsEnabled = utils.setting(CONSTANTS.SETTINGS.ENABLE_WOUNDS);
+  if (Number.isInteger(currentCombat) && woundsEnabled && actor.type === "character" && update.data?.attributes?.hp) {
+    logger.debug("Checking wound threshold");
+    const removedHitPoints = actor.data.data.attributes.hp.value - update.data.attributes.hp.value;
+    const woundThreshold = 12 + actor.data.data.abilities.con.mod;
+    logger.debug(`Actor ${actor.name} has ${removedHitPoints} removed hit points and a wound threshold of ${woundThreshold}.`);
+    if (removedHitPoints >= woundThreshold) {
+      logger.debug(`${actor.name} has suffered a wound risk.`);
+      // console.warn("waiting");
+      // utils.wait(25);
+      const flags = utils.getFlags(actor);
+      flags.woundRisks += 1;
+      let content = `${actor.name} gained a Wound Risk.<br> Their total Wound Risks are ${flags.woundRisks}.`;
 
-    console.warn(actor);
-    console.warn(update);
-    const currentCombat = game.combat?.current?.round;
-    const woundsEnabled = utils.setting(CONSTANTS.SETTINGS.ENABLE_WOUNDS);
-    if (Number.isInteger(currentCombat) && woundsEnabled && actor.type === "character" && update.data?.attributes?.hp) {
-      logger.debug("Checking wound threshold");
-      const removedHitPoints = actor.data.data.attributes.hp.value - update.data.attributes.hp.value;
-      const woundThreshold = 12 + actor.data.data.abilities.con.mod;
-      logger.debug(`Actor ${actor.name} has ${removedHitPoints} removed hit points and a wound threshold of ${woundThreshold}.`);
-      if (removedHitPoints >= woundThreshold) {
-        logger.debug(`${actor.name} has suffered a wound risk.`);
-        const flags = utils.getFlags(actor);
-        flags.woundRisks += 1;
-        let content = `${actor.name} gained a Wound Risk.<br> Their total Wound Risks are ${flags.woundRisks}.`;
+      if (removedHitPoints >= (woundThreshold * 2)) {
+        logger.debug(`${actor.name} has suffered an open wound.`);
+        flags.openWounds.combat += 1;
+        flags.openWounds.total += 1;
+        content += `<br> ${actor.name} has suffered an Open Wound. Their Open Wounds this combat are ${flags.openWounds.combat}.`;
+        content += `<br> Their current total Open Wounds are ${flags.openWounds.total}.`;
 
-        if (removedHitPoints >= (woundThreshold * 2)) {
-          logger.debug(`${actor.name} has suffered an open wound.`);
-          flags.openWounds.combat += 1;
-          flags.openWounds.total += 1;
-          content += `<br> ${actor.name} has suffered an Open Wound. Their Open Wounds this combat are ${flags.openWounds.combat}.`;
-          content += `<br> Their current total Open Wounds are ${flags.openWounds.total}.`;
-          content += `<br> They take an injury token for this damage type.`;
-          // TODO: handle injury token addition - pop up or chat diaglog?
+        // check for injury tokens - if damage comes via midi we know a lot of things about the damage
+        const newTokens = await utils.injury.tokenCheck(actor, update);
+        content += `<br> They take an injury token...`;
+        if (newTokens.length > 0) {
+          content += `<br> ...for ${newTokens.join(", ")} damage type(s).`;
         }
-
-        utils.setFlags(actor, flags);
-        ChatMessage.create({ content });
-        utils.wounds.openWoundCheck(actor, flags);
-        console.warn("flags", flags);
-
+        flags.injury.tokens = [flags.injury.tokens, newTokens].reduce((totals, current) => {
+          for (const [key, value] of Object.entries(current)) {
+            if (!totals[key]) {
+              totals[key] = 0;
+            }
+            totals[key] += value;
+          }
+          return totals;
+        }, {});
       }
+
+      utils.setFlags(actor, flags);
+      ChatMessage.create({ content });
+      // Check for Open wounds - maybe we are unconcious?
+      utils.wounds.openWoundCheck(actor, flags);
+      console.warn("flags", flags);
+
     }
-
-    resolve(actor);
-
-  });
+  }
+  return actor;
 }
 
 async function preDamageRollComplete(workflow) {
   console.warn("preDamageRollComplete", workflow);
-  let flags = utils.getFlags(workflow.actor);
-  flags.turnDamage.push(...workflow.damageList);
-  await utils.setFlags(workflow.actor, flags);
+  // let flags = utils.getFlags(workflow.actor);
+  // console.warn("flags", flags);
+  // flags.turnDamage.push(...workflow.damageList);
+  // console.warn("flags", flags);
+  // await utils.setFlags(workflow.actor, flags);
+}
+
+async function damageRollComplete(workflow) {
+  console.warn("damageRollComplete", workflow);
+  // let flags = utils.getFlags(workflow.actor);
+  // console.warn("flags", flags);
+  // flags.turnDamage.push(...workflow.damageList);
+  // console.warn("flags", flags);
+  // await utils.setFlags(workflow.actor, flags);
 }
 
 export function registerCharacterHooks() {
+  Hooks.on("preUpdateActor", preUpdateActorHook);
   if (utils.isFirstGM()) {
-    Hooks.on("preUpdateActor", preUpdateActorHook);
     Hooks.once("midi-qol.preDamageRollComplete", preDamageRollComplete);
+    Hooks.once("midi-qol.damageRollComplete", damageRollComplete);
   }
 }

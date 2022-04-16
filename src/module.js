@@ -27,6 +27,10 @@ Hooks.once("ready", () => {
       registerTrackerHooks();
     }
 
+    // TODO: hit dice on long rest to remove open wounds
+
     registerWindowFunctions();
   }
 });
+
+// TODO: Tables for injury

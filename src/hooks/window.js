@@ -7,10 +7,4 @@ export function registerWindowFunctions() {
     getFlags: utils.getFlags,
     resetFlags: utils.resetFlags,
   };
-
-  // window.GritNGlory = {
-  //   setFlags: utils.setFlags,
-  //   getFlags: utils.getFlags,
-  //   resetFlags: utils.resetFlags,
-  // };
 }

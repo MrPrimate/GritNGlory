@@ -17,6 +17,24 @@ const CONSTANTS = {
   WOUNDS: {
     MINIMUM_OPEN_WOUNDS: 3,
   },
+
+  INJURY: {
+    TYPES: [
+      "bludgeoning",
+      "slashing",
+      "piercing",
+      "fire",
+      "cold",
+      "acid",
+      "lightning",
+      "necrotic",
+      "poison",
+      "radiant",
+      "thunder",
+      "force",
+      "psychic",
+    ]
+  }
 };
 
 CONSTANTS.DEFAULT_SETTINGS = {

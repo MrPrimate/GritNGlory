@@ -29,14 +29,10 @@ async function confirmationRoll(actor) {
   };
   // const item = new Item(data, { temp: true });
 
-
-  const saveTargets = [...game.user?.targets].map((t )=> t.id);
-  game.user.updateTokenTargets([targetToken.id]);
-  const saveItem = new CONFIG.Item.documentClass(data, { parent: caster });
+  const saveItem = new CONFIG.Item.documentClass(data, { parent: actor });
   const options = { showFullCard: false, createWorkflow: true, configureDialog: true };
   const result = await MidiQOL.completeItemRoll(saveItem, options);
 
-  game.user.updateTokenTargets(saveTargets);
   // const failedSaves = [...result.failedSaves];
   // if (failedSaves.length > 0) {
   //   await game.dfreds.effectInterface.addEffect({ effectName: condition, uuid: failedSaves[0].document.uuid });
@@ -48,8 +44,6 @@ async function confirmationRoll(actor) {
 
 async function updateCombat(combat, changed) {
   if (!isTurnChange(combat, changed)) return;
-
-  const previousId = combat.previous?.combatantId;
 
   if (utils.setting(CONSTANTS.SETTINGS.ENABLE_WOUNDS)) {
     const charactersToCheck = combat.data.combatants.filter((c) =>
@@ -74,14 +68,17 @@ async function updateCombat(combat, changed) {
       await utils.setFlags(character.actor, flags);
     }
 
-    // TODO: bleeding check
+    // TODO: bleeding check/damage
+
+
+    flags.turnDamage = [];
 
   }
 }
 
 
 function deleteCombat(combat, changed) {
-  // injuries
+  // TODO: injuries
 
 }
 
