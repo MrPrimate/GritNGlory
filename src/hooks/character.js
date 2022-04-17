@@ -26,56 +26,65 @@ import utils from "../utils.js";
 
 
 async function preUpdateActorHook(actor, update) {
+  // is pc and is a hp update?
+  if (actor.type !== "character" || !update.data?.attributes?.hp) return;
+  // are we in combat?
+  if (!Number.isInteger(game.combat?.current?.round)) return;
+  // is wounds enabled?
+  const woundsEnabled = utils.setting(CONSTANTS.SETTINGS.ENABLE_WOUNDS);
+  if (!woundsEnabled) return;
+
   console.warn(actor);
   console.warn(update);
-  const currentCombat = game.combat?.current?.round;
-  const woundsEnabled = utils.setting(CONSTANTS.SETTINGS.ENABLE_WOUNDS);
-  if (Number.isInteger(currentCombat) && woundsEnabled && actor.type === "character" && update.data?.attributes?.hp) {
-    logger.debug("Checking wound threshold");
-    const removedHitPoints = actor.data.data.attributes.hp.value - update.data.attributes.hp.value;
-    const woundThreshold = 12 + actor.data.data.abilities.con.mod;
-    logger.debug(`Actor ${actor.name} has ${removedHitPoints} removed hit points and a wound threshold of ${woundThreshold}.`);
-    if (removedHitPoints >= woundThreshold) {
-      logger.debug(`${actor.name} has suffered a wound risk.`);
-      // console.warn("waiting");
-      // utils.wait(25);
-      const flags = utils.getFlags(actor);
-      flags.woundRisks += 1;
-      let content = `${actor.name} gained a Wound Risk.<br> Their total Wound Risks are ${flags.woundRisks}.`;
 
-      if (removedHitPoints >= (woundThreshold * 2)) {
-        logger.debug(`${actor.name} has suffered an open wound.`);
-        flags.openWounds.combat += 1;
-        flags.openWounds.total += 1;
-        content += `<br> ${actor.name} has suffered an Open Wound. Their Open Wounds this combat are ${flags.openWounds.combat}.`;
-        content += `<br> Their current total Open Wounds are ${flags.openWounds.total}.`;
+  const conMod = actor.data.data.abilities.con.mod;
+  const level = actor.data.data.details.level;
+  console.warn(`pre con mod ${conMod}`, actor.data.data.abilities.con.mod);
+  console.warn(`pre level ${level}`, actor.data.data.details.level);
 
-        // check for injury tokens - if damage comes via midi we know a lot of things about the damage
-        const newTokens = await utils.injury.tokenCheck(actor, update);
-        content += `<br> They take an injury token...`;
-        if (newTokens.length > 0) {
-          content += `<br> ...for ${newTokens.join(", ")} damage type(s).`;
-        }
-        flags.injury.tokens = [flags.injury.tokens, newTokens].reduce((totals, current) => {
-          for (const [key, value] of Object.entries(current)) {
-            if (!totals[key]) {
-              totals[key] = 0;
-            }
-            totals[key] += value;
-          }
-          return totals;
-        }, {});
+  logger.debug("Checking wound threshold");
+  const removedHitPoints = actor.data.data.attributes.hp.value - update.data.attributes.hp.value;
+  const woundThreshold = 12 + actor.data.data.abilities.con.mod;
+  logger.debug(`Actor ${actor.name} has ${removedHitPoints} removed hit points and a wound threshold of ${woundThreshold}.`);
+  if (removedHitPoints >= woundThreshold) {
+    logger.debug(`${actor.name} has suffered a wound risk.`);
+    // console.warn("waiting");
+    // utils.wait(25);
+    const flags = utils.getFlags(actor);
+    flags.woundRisks += 1;
+    let content = `${actor.name} gained a Wound Risk.<br> Their total Wound Risks are ${flags.woundRisks}.`;
+
+    if (removedHitPoints >= (woundThreshold * 2)) {
+      logger.debug(`${actor.name} has suffered an open wound.`);
+      flags.openWounds.combat += 1;
+      flags.openWounds.total += 1;
+      content += `<br> ${actor.name} has suffered an Open Wound. Their Open Wounds this combat are ${flags.openWounds.combat}.`;
+      content += `<br> Their current total Open Wounds are ${flags.openWounds.total}.`;
+
+      // check for injury tokens - if damage comes via midi we know a lot of things about the damage
+      const newTokens = await utils.injury.tokenCheck(actor, actor.data.data.traits.di.value, update);
+      content += `<br> They take an injury token...`;
+      if (newTokens.length > 0) {
+        content += `<br> ...for ${newTokens.join(", ")} damage type(s).`;
       }
-
-      utils.setFlags(actor, flags);
-      ChatMessage.create({ content });
-      // Check for Open wounds - maybe we are unconcious?
-      utils.wounds.openWoundCheck(actor, flags);
-      console.warn("flags", flags);
-
+      flags.injury.tokens = [flags.injury.tokens, newTokens].reduce((totals, current) => {
+        for (const [key, value] of Object.entries(current)) {
+          if (!totals[key]) {
+            totals[key] = 0;
+          }
+          totals[key] += value;
+        }
+        return totals;
+      }, {});
     }
+
+    utils.setFlags(actor, flags);
+    ChatMessage.create({ content });
+    // Check for Open wounds - maybe we are unconcious?
+    utils.wounds.openWoundCheck(actor, conMod, level, flags);
+    console.warn("flags", flags);
+
   }
-  return actor;
 }
 
 async function preDamageRollComplete(workflow) {
@@ -98,6 +107,7 @@ async function damageRollComplete(workflow) {
 
 export function registerCharacterHooks() {
   Hooks.on("preUpdateActor", preUpdateActorHook);
+  // Hooks.on("updateActor", updateActorHook);
   if (utils.isFirstGM()) {
     Hooks.once("midi-qol.preDamageRollComplete", preDamageRollComplete);
     Hooks.once("midi-qol.damageRollComplete", damageRollComplete);

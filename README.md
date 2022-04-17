@@ -1,3 +1,12 @@
+# ALPHA SOFTWARE
+
+This module is in alpha.
+
+Please don't use it in your game.
+
+Things are subject to change.
+
+
 # Grit and Glory
 
 This module aims to implement features from Grit & Glory. Currently it supports only the Wounds subsystem.
@@ -7,3 +16,5 @@ Find out more at [Reddit](https://www.reddit.com/r/gritandglory5e/comments/empff
 ## Wounds
 
 In the Grit & Glory module settings enable Wounds.
+
+They will only be calculated if in combat.

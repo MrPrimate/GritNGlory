@@ -1,39 +1,6 @@
 import CONSTANTS from "./constants.js";
 import logger from "./logger.js";
 
-
-async function selectInjuryType() {
-
-  const contentOptions = CONSTANTS.INJURY.TYPES.map((t) => `<option value=${t}>${t}</option>`).join("");
-  const content = `
-<div class="form-group">
- <label>Weapons : </label>
- <select name="types">
- ${contentOptions}
- </select>
-</div>
-`;
-  new Dialog({
-    title: "Unable to detect damage type, please select one",
-    content,
-    buttons: {
-      Ok: {
-        label: "Ok",
-        callback: async (html) => {
-          const type = html.find("[name=type]")[0].value;
-          console.warn(`Detected damage type: ${type}`);
-        },
-      },
-      Cancel: {
-        label: "Cancel",
-      },
-    },
-  }).render(true);
-
-}
-
-
-
 const utils = {
 
   wait: async (ms) => {
@@ -108,22 +75,16 @@ const utils = {
   },
 
   wounds: {
-    openWoundCheck: (actor, flags) => {
+    // why are we passing in conMod and level here?
+    // well some kind of weird bug where when the actor is passed in it doesn't work right,
+    openWoundCheck: (actor, conMod, level, flags) => {
       logger.debug(`${actor.name} has checking open wounds.`);
-      console.warn(actor);
-      console.warn(actor.name);
-      console.warn(actor.data.data);
-      console.warn(actor.data.data.abilities.con.mod);
-      console.warn(actor.data.data.details.level);
-      console.warn(Math.floor(actor.data.data.details.level / 2))
-      console.warn(actor.data.data.abilities.con.mod + Math.floor(actor.data.data.details.level / 2))
-      const actorWounds = actor.data.data.abilities.con.mod + Math.floor(actor.data.data.details.level / 2);
-      console.warn("actorWounds", actorWounds);
-      console.warn("CONSTANTS.WOUNDS.MINIMUM_OPEN_WOUNDS", CONSTANTS.WOUNDS.MINIMUM_OPEN_WOUNDS);
+      const actorWounds = conMod + Math.floor(level / 2);
+
       const maxOpenWounds = Math.max(actorWounds, CONSTANTS.WOUNDS.MINIMUM_OPEN_WOUNDS);
-      console.warn("maxOpenWounds", maxOpenWounds);
+      logger.debug("maxOpenWounds", maxOpenWounds);
       if (flags.openWounds.total >= maxOpenWounds) {
-        let content = `${actor.name} has now suffered ${flags.openWounds.total} Open Wounds. The are now unconscious.`;
+        let content = `${actor.name} has now suffered ${flags.openWounds.total} Open Wounds. They are now unconscious.`;
         ChatMessage.create({ content });
         if (game.modules.get("dfreds-convenient-effects")?.active) {
           game.dfreds.effectInterface.addEffect({ effectName: "Unconscious", uuid: actor.uuid });
@@ -133,19 +94,51 @@ const utils = {
   },
 
   injury: {
-    tokenCheck: async (actor, update) => {
-      console.warn(update);
+    selectInjuryType: async (actor) => {
+
+      const contentOptions = CONSTANTS.INJURY.TYPES.map((t) => `<option value=${t}>${t}</option>`).join("");
+      const content = `
+<div class="form-group">
+  <label>Weapons : </label>
+  <select name="damageTypes">
+  ${contentOptions}
+  </select>
+</div>
+`;
+      new Dialog({
+        title: "Unable to detect damage type, please select one",
+        content,
+        buttons: {
+          Ok: {
+            label: "Ok",
+            callback: async (html) => {
+              const type = html.find("[name=damageTypes]")[0].value;
+              const flags = utils.getFlags(actor);
+              flags.injury.tokens[type] += 1;
+              utils.setFlags(actor, flags);
+            },
+          },
+          Cancel: {
+            label: "Cancel",
+          },
+        },
+      }).render(true);
+
+    },
+
+    tokenCheck: async (actor, diValues, update) => {
+      logger.debug("injury.tokenCheck", update);
       let tokens = {};
       if (update.damageItem?.appliedDamage) {
         for (const damage of update.damageItem.damageDetail[0]) {
           // immune?
-          if (!actor.data.data.traits.di.value.includes(damage.type)) {
+          if (!diValues.includes(damage.type)) {
             tokens[damage.type] += 1;
           }
         }
       } else {
-        // TO DO : dialog to add injury
-        await selectInjuryType(actor);
+        logger.debug("Unable to parse damage type");
+        await utils.selectInjuryType(actor);
       }
 
       return tokens;
