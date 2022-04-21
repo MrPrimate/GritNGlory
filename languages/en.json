@@ -27,6 +27,11 @@
           "Content": "Are you sure you want to reset all of the Grit & Glory module settings' to their defaults?",
           "Confirm": "Reset Module Settings",
           "Cancel": "Cancel"
+      },
+      "CharacterSettings": {
+          "Title": "Grit & Glory | Character Settings",
+          "Save": "Save",
+          ""
       }
     }
   }

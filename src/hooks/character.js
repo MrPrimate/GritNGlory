@@ -87,29 +87,6 @@ async function preUpdateActorHook(actor, update) {
   }
 }
 
-async function preDamageRollComplete(workflow) {
-  console.warn("preDamageRollComplete", workflow);
-  // let flags = utils.getFlags(workflow.actor);
-  // console.warn("flags", flags);
-  // flags.turnDamage.push(...workflow.damageList);
-  // console.warn("flags", flags);
-  // await utils.setFlags(workflow.actor, flags);
-}
-
-async function damageRollComplete(workflow) {
-  console.warn("damageRollComplete", workflow);
-  // let flags = utils.getFlags(workflow.actor);
-  // console.warn("flags", flags);
-  // flags.turnDamage.push(...workflow.damageList);
-  // console.warn("flags", flags);
-  // await utils.setFlags(workflow.actor, flags);
-}
-
 export function registerCharacterHooks() {
   Hooks.on("preUpdateActor", preUpdateActorHook);
-  // Hooks.on("updateActor", updateActorHook);
-  if (utils.isFirstGM()) {
-    Hooks.once("midi-qol.preDamageRollComplete", preDamageRollComplete);
-    Hooks.once("midi-qol.damageRollComplete", damageRollComplete);
-  }
 }

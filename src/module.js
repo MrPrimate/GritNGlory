@@ -5,6 +5,7 @@ import { registerLibwrappers } from "./hooks/libwrapper.js";
 import { registerCharacterHooks } from "./hooks/character.js";
 import { registerWindowFunctions } from "./hooks/window.js";
 import { registerTrackerHooks } from "./hooks/tracker.js";
+import { registerSheetButton } from "./hooks/sheets.js";
 
 Hooks.once("init", () => {
   registerSettings();
@@ -21,10 +22,8 @@ Hooks.once("ready", () => {
     const woundsEnabled = game.settings.get(CONSTANTS.MODULE_NAME, CONSTANTS.SETTINGS.ENABLE_WOUNDS);
     if (woundsEnabled) {
       registerCharacterHooks();
-    }
-
-    if (woundsEnabled) {
       registerTrackerHooks();
+      registerSheetButton();
     }
 
     // TODO: hit dice on long rest to remove open wounds

@@ -95,8 +95,10 @@ const utils = {
 
   injury: {
     selectInjuryType: async (actor) => {
+      const contentOptions = Object.entries(CONFIG.DND5E.damageTypes).map(([key, value]) => {
+        return `<option value=${key}>${value}</option>`
+      }).join();
 
-      const contentOptions = CONSTANTS.INJURY.TYPES.map((t) => `<option value=${t}>${t}</option>`).join("");
       const content = `
 <div class="form-group">
   <label>Weapons : </label>

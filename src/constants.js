@@ -19,21 +19,7 @@ const CONSTANTS = {
   },
 
   INJURY: {
-    TYPES: [
-      "bludgeoning",
-      "slashing",
-      "piercing",
-      "fire",
-      "cold",
-      "acid",
-      "lightning",
-      "necrotic",
-      "poison",
-      "radiant",
-      "thunder",
-      "force",
-      "psychic",
-    ]
+    TYPES: Object.keys(CONFIG.DND5E.damageTypes),
   }
 };
 
