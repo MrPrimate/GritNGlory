@@ -1,5 +1,7 @@
 const debouncedReload = foundry.utils.debounce(() => window.location.reload(), 100);
 
+
+
 const CONSTANTS = {
   MODULE_NAME: "GritNGlory",
   MODULE_FULL_NAME: "GritNGlory.ModuleName",
@@ -18,9 +20,6 @@ const CONSTANTS = {
     MINIMUM_OPEN_WOUNDS: 3,
   },
 
-  INJURY: {
-    TYPES: Object.keys(CONFIG.DND5E.damageTypes),
-  }
 };
 
 CONSTANTS.DEFAULT_SETTINGS = {

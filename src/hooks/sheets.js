@@ -14,7 +14,7 @@ export function registerSheetButton() {
       // only for GMs or the owner of this character
       if (!data.owner || !data.actor) return;
 
-      const button = $(`<a class="gng-open" title="Grit & Glory"><i class="fab fa-grimace"></i></a>`);
+      const button = $(`<a class="gng-open" title="Grit & Glory"><i class="fas fa-exclamation"></i> G&G</a>`);
 
       button.click(() => {
         const settings = new SettingsViewer(SettingsViewer.defaultOptions, data.actor);

@@ -1,4 +1,20 @@
-import CONSTANTS from "../constants";
+import CONSTANTS from "../constants.js";
+import utils from "../utils.js";
+
+const example = {
+  woundRisks: 0,
+  openWounds: {
+    combatId: game.combat?.id,
+    combat: 0,
+    total: 0,
+  },
+  injury: {
+    tokens: [],
+    list: [],
+  },
+  bleeding: false,
+  turnDamage: [],
+};
 
 export class SettingsViewer extends FormApplication {
   static get defaultOptions() {
@@ -13,45 +29,48 @@ export class SettingsViewer extends FormApplication {
   /** @override */
   async getData() { // eslint-disable-line class-methods-use-this
     // console.warn(this);
-    // console.warn(this.object);
+    console.warn(this.object);
     let item = this.object.data;
 
-    const icon = item.flags.ddbimporter?.ignoreIcon;
-    const itemImport = item.flags.ddbimporter?.ignoreItemImport;
-    const resource = item.flags.ddbimporter?.retainResourceConsumption;
-    // const itemSync = item.flags.ddbimporter?.ignoreItemSync;
+    const flags = {};
+    return flags;
 
-    const settings = [
-      {
-        name: "ignoreItemImport",
-        isChecked: itemImport,
-        description: "Ignore this item when importing the character (implies all other settings here).",
-      },
-      {
-        name: "ignoreIcon",
-        isChecked: icon,
-        description: "Ignore icon updates.",
-      },
-      {
-        name: "retainResourceConsumption",
-        isChecked: resource,
-        description: "Retain Resource Consumption linking.",
-      },
-      // {
-      //   name: "ignoreItemSync",
-      //   isChecked: itemSync,
-      //   description: "Ignore this item when when syncing the character",
-      // },
-    ];
+    // const icon = item.flags.ddbimporter?.ignoreIcon;
+    // const itemImport = item.flags.ddbimporter?.ignoreItemImport;
+    // const resource = item.flags.ddbimporter?.retainResourceConsumption;
+    // // const itemSync = item.flags.ddbimporter?.ignoreItemSync;
 
-    const result = {
-      name: item.name,
-      img: item.img,
-      character: this.object.actor.name,
-      settings: settings,
-    };
+    // const settings = [
+    //   {
+    //     name: "ignoreItemImport",
+    //     isChecked: itemImport,
+    //     description: "Ignore this item when importing the character (implies all other settings here).",
+    //   },
+    //   {
+    //     name: "ignoreIcon",
+    //     isChecked: icon,
+    //     description: "Ignore icon updates.",
+    //   },
+    //   {
+    //     name: "retainResourceConsumption",
+    //     isChecked: resource,
+    //     description: "Retain Resource Consumption linking.",
+    //   },
+    //   // {
+    //   //   name: "ignoreItemSync",
+    //   //   isChecked: itemSync,
+    //   //   description: "Ignore this item when when syncing the character",
+    //   // },
+    // ];
 
-    return result;
+    // const result = {
+    //   name: item.name,
+    //   img: item.img,
+    //   character: this.object.actor.name,
+    //   settings: settings,
+    // };
+
+    // return result;
   }
 
   get id() {
@@ -65,17 +84,17 @@ export class SettingsViewer extends FormApplication {
   async _updateObject(event, formData) {
     event.preventDefault();
 
-    let item = {
-      _id: this.object.data._id,
-      flags: this.object.data.flags,
-    };
+    // let item = {
+    //   _id: this.object.data._id,
+    //   flags: this.object.data.flags,
+    // };
 
-    if (!item.flags.ddbimporter) item.flags.ddbimporter = {};
-    item.flags.ddbimporter['ignoreIcon'] = formData['ignoreIcon'];
-    item.flags.ddbimporter['ignoreItemImport'] = formData['ignoreItemImport'];
-    item.flags.ddbimporter['retainResourceConsumption'] = formData['retainResourceConsumption'];
-    // item.flags.ddbimporter['ignoreItemSync'] = formData['ignoreItemSync'];
-    this.object.actor.updateEmbeddedDocuments("Item", [item]);
+    // if (!item.flags.ddbimporter) item.flags.ddbimporter = {};
+    // item.flags.ddbimporter['ignoreIcon'] = formData['ignoreIcon'];
+    // item.flags.ddbimporter['ignoreItemImport'] = formData['ignoreItemImport'];
+    // item.flags.ddbimporter['retainResourceConsumption'] = formData['retainResourceConsumption'];
+    // // item.flags.ddbimporter['ignoreItemSync'] = formData['ignoreItemSync'];
+    // this.object.actor.updateEmbeddedDocuments("Item", [item]);
 
   }
 }

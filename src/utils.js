@@ -27,7 +27,7 @@ const utils = {
 
   getDefaultInjuryTokens: () => {
     const tokens = {};
-    CONSTANTS.INJURY.TYPES.forEach((type) => {
+    Object.keys(CONFIG.DND5E.damageTypes).forEach((type) => {
       tokens[type] = 0;
     });
     return tokens;
