@@ -40,5 +40,15 @@
       "path": "languages/en.json"
     }
   ],
-  "media": []
+  "media": [],
+  "packs": [
+    {
+      "name": "gritnglory-tables",
+      "label": "Grit & Glory Tables",
+      "system": "dnd5e",
+      "path": "./packs/tables.db",
+      "entity": "RollTable",
+      "type": "RollTable"
+    }
+  ]
 }
