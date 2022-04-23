@@ -1,0 +1,26 @@
+<form>
+  <header class="sheet-header">
+    <img class="character-icon" src="{{actor.data.token.img}}" data-edit="img">
+    <h1 class="character-title">{{ actor.name }}</h1>
+  </header>
+  <hr>
+  <div class="form-description">
+    <h3>{{ localize 'GritNGlory.Dialogs.CharacterSettings.Wounds' }}</h3>
+    <div><input id="gng-wound-risks" class="gng-settings-small" name="wound-risks" value="{{flags.woundRisks}}" /> <label for="gng-wound-risks">{{ localize "GritNGlory.Dialogs.CharacterSettings.WoundRisks" }}</label></div>
+    <div><input id="gng-open-wounds-combat" class="gng-settings-small" name="open-wounds-combat" value="{{flags.openWounds.combat}}" /> <label for="gng-open-wounds-combat">{{ localize 'GritNGlory.Dialogs.CharacterSettings.OpenWoundsCombat' }}</label></div>
+    <div><input id="gng-open-wounds-total" class="gng-settings-small" name="open-wounds-total" value="{{flags.openWounds.total}}" /> <label for="gng-open-wounds-total">{{ localize 'GritNGlory.Dialogs.CharacterSettings.OpenWoundsTotal' }}</label></div>
+    <div><input id="gng-bleeding" {{checked flags.bleeding}} type="checkbox" name="bleeding"> <label for="bleeding">{{ localize 'GritNGlory.Dialogs.CharacterSettings.Bleeding' }}</label></div>
+    <hr>
+    <h3>{{ localize 'GritNGlory.Dialogs.CharacterSettings.InjuryTokens' }}</h3>
+    {{#each injuryTokens}}
+    <div>
+      <div><input id="gng-injury-token{{ this.type }}" class="gng-settings-small" name="token-{{ this.type }}" value="{{this.value}}" /> {{ this.name }}</div>
+    </div>
+    {{/each}}
+    <hr>
+    <h3>{{ localize 'GritNGlory.Dialogs.CharacterSettings.Injuries' }}</h3>
+    <div><textarea id="gng-injuries" class="gng-settings-large" name="injuries" rows="4">{{ injuryList }}</textarea></div>
+  </div>
+  <hr>
+  <button id="gng-settings-save" class="gng-settings-save" type="submit">{{ localize 'GritNGlory.Dialogs.CharacterSettings.Save' }}</button>
+</form>

@@ -34,13 +34,15 @@ async function preUpdateActorHook(actor, update) {
   const woundsEnabled = utils.setting(CONSTANTS.SETTINGS.ENABLE_WOUNDS);
   if (!woundsEnabled) return;
 
+  // is bleeding damage?
+  const isBleedingDamage = update.flags?[CONSTANTS.FLAG_NAME]?.bleedingUpdate === `${game.combat.id}${game.combat.current.round}${game.combat.current.turn}`;
+  if (isBleedingDamage) return;
   console.warn(actor);
   console.warn(update);
 
+
   const conMod = actor.data.data.abilities.con.mod;
   const level = actor.data.data.details.level;
-  console.warn(`pre con mod ${conMod}`, actor.data.data.abilities.con.mod);
-  console.warn(`pre level ${level}`, actor.data.data.details.level);
 
   logger.debug("Checking wound threshold");
   const removedHitPoints = actor.data.data.attributes.hp.value - update.data.attributes.hp.value;
@@ -82,9 +84,8 @@ async function preUpdateActorHook(actor, update) {
     ChatMessage.create({ content });
     // Check for Open wounds - maybe we are unconcious?
     utils.wounds.openWoundCheck(actor, conMod, level, flags);
-    console.warn("flags", flags);
-
   }
+
 }
 
 export function registerCharacterHooks() {

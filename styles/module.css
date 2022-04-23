@@ -1,0 +1,29 @@
+.gng-hidden {
+  visibility: hidden;
+}
+
+.gng div.form-section {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.gng div.form-caption {
+  flex: 0 1 15%;
+  font-family: "Roboto Condensed";
+}
+.gng div.form-content {
+  flex: 0 1 85%;
+}
+.gng div.form-description {
+  flex: 0 1 100%;
+  font-size: 0.9rem;
+}
+
+.gng-settings-small {
+  width: 35px;
+}
+
+.gng-settings-large {
+  width: 100%;
+}

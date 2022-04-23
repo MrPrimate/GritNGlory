@@ -1,4 +1,5 @@
 import utils from "../utils.js";
+import logger from "../logger.js";
 import CONSTANTS from "../constants.js";
 
 
@@ -11,6 +12,7 @@ function isTurnChange(combat, changed) {
 }
 
 async function confirmationRoll(actor) {
+  const dc = 12 + utils.getFlags(actor).woundRisks;
   const data = {
     name: "Confirmation Roll",
     type: "feat",
@@ -22,7 +24,7 @@ async function confirmationRoll(actor) {
       "actionType": "save",
       save: {
         "ability": "con",
-        "dc": 12 + utils.getFlags(actor).woundRisks,
+        "dc": dc,
         "scaling": "flat"
       },
     },
@@ -43,42 +45,64 @@ async function confirmationRoll(actor) {
 
 
 async function updateCombat(combat, changed) {
+  console.warn("updateCombat", combat, changed);
   if (!isTurnChange(combat, changed)) return;
 
   if (utils.setting(CONSTANTS.SETTINGS.ENABLE_WOUNDS)) {
-    const charactersToCheck = combat.data.combatants.filter((c) =>
-      c.actor.type === "character" && utils.getFlags(c.actor).woundRisks > 0
-    );
+    const charactersToCheck = combat.data.combatants.filter((c) => c.actor.type === "character");
 
-    // confirmation roll
     for (let i = 0; i < charactersToCheck.length; i++) {
       const character = charactersToCheck[i];
       const flags = utils.getFlags(character.actor);
-      // eslint-disable-next-line no-await-in-loop
-      const result = await confirmationRoll(character.actor);
+      if (flags.woundRisks > 0) {
+        // eslint-disable-next-line no-await-in-loop
+        const result = await confirmationRoll(character.actor);
 
-      if (result.failure) {
-        flags.openWounds.combat += 1;
-        flags.openWounds.total += 1;
-        flags.bleeding = true;
+        console.warn(result);
+        if (result.failure) {
+          flags.openWounds.combat += 1;
+          flags.openWounds.total += 1;
+          flags.bleeding = true;
+          // TODO: injury token (if failed confirmation roll by 10 or more)
+        }
+
+        flags.woundRisks = 0;
+        // eslint-disable-next-line no-await-in-loop
+        await utils.setFlags(character.actor, flags);
       }
-
-      flags.woundRisks = 0;
-      // eslint-disable-next-line no-await-in-loop
-      await utils.setFlags(character.actor, flags);
+      console.warn(`Bleeding check for ${character.actor.name}`);
+      console.warn(flags)
+      if (combat.current.combatantId === character.id && flags.bleeding) {
+        const content = `${character.actor.name} has suffered ${flags.openWounds.combat} bleeding damage.`;
+        logger.info(content);
+        ChatMessage.create({ content });
+        let bleedingData = {
+          _id: character.actor.id,
+          "data.attributes.hp.value": character.actor.data.data.attributes.hp.value - flags.openWounds.combat,
+        };
+        setProperty(bleedingData, `flags.${CONSTANTS.FLAG_NAME}.bleedingUpdate`, `${game.combat.id}${game.combat.current.round}${game.combat.current.turn}`);
+        // eslint-disable-next-line no-await-in-loop
+        await character.actor.update(bleedingData);
+      }
     }
-
-    // TODO: bleeding check/damage
-
-
-    flags.turnDamage = [];
-
   }
 }
 
 
-function deleteCombat(combat, changed) {
-  // TODO: injuries
+async function deleteCombat(combat, changed) {
+  if (utils.setting(CONSTANTS.SETTINGS.ENABLE_WOUNDS)) {
+    const charactersToCheck = combat.data.combatants.filter((c) => c.actor.type === "character");
+    for (let i = 0; i < charactersToCheck.length; i++) {
+      const character = charactersToCheck[i];
+      const flags = utils.getFlags(character.actor);
+      flags.woundRisks = 0;
+      flags.openWounds.combat = 0;
+      // eslint-disable-next-line no-await-in-loop
+      await utils.setFlags(character.actor, flags);
+    }
+    // TODO: injuries
+    // check injury tokens and present roll dialog
+  }
 
 }
 

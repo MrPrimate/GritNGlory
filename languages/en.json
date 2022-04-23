@@ -30,7 +30,14 @@
       },
       "CharacterSettings": {
           "Title": "Grit & Glory | Character Settings",
-          "Save": "Save"
+          "Save": "Save",
+          "Wounds": "Wounds",
+          "WoundRisks": "Wound Risks",
+          "OpenWoundsCombat": "Open Wounds (Combat)",
+          "OpenWoundsTotal": "Open Wounds (Total)",
+          "InjuryTokens": "Injury Tokens",
+          "Injuries": "Injuries",
+          "Bleeding": "Bleeding"
       }
     }
   }

@@ -34,7 +34,6 @@ CONSTANTS.DEFAULT_SETTINGS = {
     onChange: debouncedReload,
   },
 
-
   // debug
   [CONSTANTS.SETTINGS.LOG_LEVEL]: {
     name: "GritNGlory.Settings.LogLevel.Name",

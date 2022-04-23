@@ -1,76 +1,44 @@
 import CONSTANTS from "../constants.js";
 import utils from "../utils.js";
 
-const example = {
-  woundRisks: 0,
-  openWounds: {
-    combatId: game.combat?.id,
-    combat: 0,
-    total: 0,
-  },
-  injury: {
-    tokens: [],
-    list: [],
-  },
-  bleeding: false,
-  turnDamage: [],
-};
-
 export class SettingsViewer extends FormApplication {
+
+  constructor(options, actor) {
+    super(options);
+    this.actor = game.actors.get(actor.id ? actor.id : actor._id);
+  }
+
   static get defaultOptions() {
     const options = super.defaultOptions;
-    options.title = game.i18n.localize("GritNGlory.Dialogs.SettingsViewer.Title");
+    options.title = game.i18n.localize("GritNGlory.Dialogs.CharacterSettings.Title");
     options.template = `modules/${CONSTANTS.MODULE_NAME}/templates/settings-viewer.hbs`;
     options.classes = ["gng", "sheet"];
-    options.width = 500;
+    options.width = 300;
     return options;
   }
 
   /** @override */
   async getData() { // eslint-disable-line class-methods-use-this
     // console.warn(this);
-    console.warn(this.object);
-    let item = this.object.data;
 
-    const flags = {};
-    return flags;
+    const flags = utils.getFlags(this.actor);
 
-    // const icon = item.flags.ddbimporter?.ignoreIcon;
-    // const itemImport = item.flags.ddbimporter?.ignoreItemImport;
-    // const resource = item.flags.ddbimporter?.retainResourceConsumption;
-    // // const itemSync = item.flags.ddbimporter?.ignoreItemSync;
+    const tokens = [];
+    for (const [key, value] of Object.entries(flags.injury.tokens)) {
+      tokens.push({
+        name: CONFIG.DND5E.damageTypes[key],
+        value,
+        type: key,
+      });
+    }
 
-    // const settings = [
-    //   {
-    //     name: "ignoreItemImport",
-    //     isChecked: itemImport,
-    //     description: "Ignore this item when importing the character (implies all other settings here).",
-    //   },
-    //   {
-    //     name: "ignoreIcon",
-    //     isChecked: icon,
-    //     description: "Ignore icon updates.",
-    //   },
-    //   {
-    //     name: "retainResourceConsumption",
-    //     isChecked: resource,
-    //     description: "Retain Resource Consumption linking.",
-    //   },
-    //   // {
-    //   //   name: "ignoreItemSync",
-    //   //   isChecked: itemSync,
-    //   //   description: "Ignore this item when when syncing the character",
-    //   // },
-    // ];
-
-    // const result = {
-    //   name: item.name,
-    //   img: item.img,
-    //   character: this.object.actor.name,
-    //   settings: settings,
-    // };
-
-    // return result;
+    console.warn(flags);
+    return {
+      flags,
+      injuryTokens: tokens,
+      injuryList: flags.injury.list.join("\n"),
+      actor: this.actor,
+    };
   }
 
   get id() {
@@ -83,18 +51,22 @@ export class SettingsViewer extends FormApplication {
   // eslint-disable-next-line no-unused-vars
   async _updateObject(event, formData) {
     event.preventDefault();
+    console.warn(formData);
 
-    // let item = {
-    //   _id: this.object.data._id,
-    //   flags: this.object.data.flags,
-    // };
+    const flags = utils.getFlags(this.actor);
 
-    // if (!item.flags.ddbimporter) item.flags.ddbimporter = {};
-    // item.flags.ddbimporter['ignoreIcon'] = formData['ignoreIcon'];
-    // item.flags.ddbimporter['ignoreItemImport'] = formData['ignoreItemImport'];
-    // item.flags.ddbimporter['retainResourceConsumption'] = formData['retainResourceConsumption'];
-    // // item.flags.ddbimporter['ignoreItemSync'] = formData['ignoreItemSync'];
-    // this.object.actor.updateEmbeddedDocuments("Item", [item]);
+    flags.woundRisks = parseInt(formData["wound-risks"]);
+    flags.openWounds.combat = parseInt(formData["open-wounds-combat"]);
+    flags.openWounds.total = parseInt(formData["open-wounds-total"]);
+    flags.bleeding = formData["bleeding"];
+
+    Object.keys(CONFIG.DND5E.damageTypes).forEach((type) => {
+      flags.injury.tokens[type] = parseInt(formData[`token-${type}`]);
+    });
+
+    flags.injury.list = formData["injuries"].split("\n");
+
+    await utils.setFlags(this.actor, flags);
 
   }
 }

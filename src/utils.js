@@ -48,7 +48,6 @@ const utils = {
           list: [],
         },
         bleeding: false,
-        turnDamage: [],
       };
     if (game.combat && game.combat.id !== flags.openWounds.combatId) {
       flags.openWounds.combatId = game.combat.id;
@@ -56,7 +55,6 @@ const utils = {
       flags.woundRisks = 0;
       flags.bleeding = false;
       flags.injury.tokens = utils.getDefaultInjuryTokens();
-      flags.turnDamage = [];
     } else if (!game.combat?.current?.round) {
       flags.openWounds.combatId = null;
     }
@@ -84,7 +82,7 @@ const utils = {
       const maxOpenWounds = Math.max(actorWounds, CONSTANTS.WOUNDS.MINIMUM_OPEN_WOUNDS);
       logger.debug("maxOpenWounds", maxOpenWounds);
       if (flags.openWounds.total >= maxOpenWounds) {
-        let content = `${actor.name} has now suffered ${flags.openWounds.total} Open Wounds. They are now unconscious.`;
+        const content = `${actor.name} has now suffered ${flags.openWounds.total} Open Wounds. They are now unconscious.`;
         ChatMessage.create({ content });
         if (game.modules.get("dfreds-convenient-effects")?.active) {
           game.dfreds.effectInterface.addEffect({ effectName: "Unconscious", uuid: actor.uuid });
@@ -96,7 +94,7 @@ const utils = {
   injury: {
     selectInjuryType: async (actor) => {
       const contentOptions = Object.entries(CONFIG.DND5E.damageTypes).map(([key, value]) => {
-        return `<option value=${key}>${value}</option>`
+        return `<option value=${key}>${value}</option>`;
       }).join();
 
       const content = `
