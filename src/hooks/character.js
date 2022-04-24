@@ -39,12 +39,16 @@ async function preUpdateActorHook(actor, update) {
   const bleedingUpdateValue = `${game.combat.id}${game.combat.current.round}${game.combat.current.turn}`;
   const isBleedingDamage = bleedingFlag === bleedingUpdateValue;
   if (isBleedingDamage) return;
-  console.warn(actor);
-  console.warn(update);
-
 
   const conMod = actor.data.data.abilities.con.mod;
   const level = actor.data.data.details.level;
+
+  // token check for unconscious
+  const unconsciousInjuryToken = update.data.attributes.hp.value <= 0;
+  if (unconsciousInjuryToken) {
+    const content = `${actor.name} is unconscious and takes a injury token`;
+    logger.debug(content);
+  }
 
   logger.debug("Checking wound threshold");
   const removedHitPoints = actor.data.data.attributes.hp.value - update.data.attributes.hp.value;
@@ -52,24 +56,29 @@ async function preUpdateActorHook(actor, update) {
   logger.debug(`Actor ${actor.name} has ${removedHitPoints} removed hit points and a wound threshold of ${woundThreshold}.`);
   if (removedHitPoints >= woundThreshold) {
     logger.debug(`${actor.name} has suffered a wound risk.`);
-    // console.warn("waiting");
-    // utils.wait(25);
     const flags = utils.getFlags(actor);
     flags.woundRisks += 1;
-    let content = `${actor.name} gained a Wound Risk.<br> Their total Wound Risks are ${flags.woundRisks}.`;
+
+    const i18nData = { actorName: actor.name, number: flags.woundRisks };
+    let content = game.i18n.format(`${CONSTANTS.MODULE_NAME}.Chat.Wounds.GainRisk`, i18nData);
 
     if (removedHitPoints >= (woundThreshold * 2)) {
       logger.debug(`${actor.name} has suffered an open wound.`);
       flags.openWounds.combat += 1;
       flags.openWounds.total += 1;
-      content += `<br> ${actor.name} has suffered an Open Wound. Their Open Wounds this combat are ${flags.openWounds.combat}.`;
-      content += `<br> Their current total Open Wounds are ${flags.openWounds.total}.`;
+
+      content += game.i18n.format(`${CONSTANTS.MODULE_NAME}.Chat.Wounds.GainWound`, { actorName: actor.name, number: flags.openWounds.combat });
+      content += "<br> ";
+      content += game.i18n.format(`${CONSTANTS.MODULE_NAME}.Chat.Wounds.TotalWounds`, { number: flags.openWounds.total });
 
       // check for injury tokens - if damage comes via midi we know a lot of things about the damage
       const newTokens = await utils.injury.tokenCheck(actor, actor.data.data.traits.di.value, update);
-      content += `<br> They take an injury token...`;
+      content += "<br> ";
       if (newTokens.length > 0) {
-        content += `<br> ...for ${newTokens.join(", ")} damage type(s).`;
+        const damageTypes = Object.keys(newTokens).join(", ");
+        content += game.i18n.format(`${CONSTANTS.MODULE_NAME}.Chat.Injury.TokensKnown`, { damageTypes });
+      } else {
+        content += game.i18n.localize(`${CONSTANTS.MODULE_NAME}.Chat.Injury.TokensUnknown`);
       }
       flags.injury.tokens = [flags.injury.tokens, newTokens].reduce((totals, current) => {
         for (const [key, value] of Object.entries(current)) {

@@ -39,6 +39,23 @@
           "Injuries": "Injuries",
           "Bleeding": "Bleeding"
       }
+    },
+    "Chat": {
+      "Injury": {
+        "TokenResolutionOutline": "{actorName} must roll on the following tables:",
+        "TokenResolutionType": "For {type} tokens (taken {number}) roll on {tableName}.",
+        "TokensKnown": "They take an injury token for {damageTypes} damage type(s).",
+        "TokensUnknown": "They take an injury token for an unknown damage type."
+      },
+      "Bleeding": {
+        "Damage": "{actorName} has suffered {number} bleeding damage."
+      },
+      "ConfirmationRoll": "Confirmation Roll",
+      "Wounds": {
+        "GainRisk": "{actorName} gained a Wound Risk.<br> Their total Wound Risks are {number}.",
+        "GainWound": "{actorName} has suffered an Open Wound. Their Open Wounds this combat are {number}.",
+        "TotalWounds": "Their current total Open Wounds are {number}."
+      }
     }
   }
 }

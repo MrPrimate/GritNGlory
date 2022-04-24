@@ -1,10 +1,7 @@
 const debouncedReload = foundry.utils.debounce(() => window.location.reload(), 100);
 
-
-
 const CONSTANTS = {
   MODULE_NAME: "GritNGlory",
-  MODULE_FULL_NAME: "GritNGlory.ModuleName",
   FLAG_NAME: "GritNGlory",
   SETTINGS: {
     // Enable options

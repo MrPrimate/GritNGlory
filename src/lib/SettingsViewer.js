@@ -10,7 +10,7 @@ export class SettingsViewer extends FormApplication {
 
   static get defaultOptions() {
     const options = super.defaultOptions;
-    options.title = game.i18n.localize("GritNGlory.Dialogs.CharacterSettings.Title");
+    options.title = game.i18n.localize(`${CONSTANTS.MODULE_NAME}.Dialogs.CharacterSettings.Title`);
     options.template = `modules/${CONSTANTS.MODULE_NAME}/templates/settings-viewer.hbs`;
     options.classes = ["gng", "sheet"];
     options.width = 300;
@@ -32,7 +32,6 @@ export class SettingsViewer extends FormApplication {
       });
     }
 
-    console.warn(flags);
     return {
       flags,
       injuryTokens: tokens,
@@ -51,7 +50,6 @@ export class SettingsViewer extends FormApplication {
   // eslint-disable-next-line no-unused-vars
   async _updateObject(event, formData) {
     event.preventDefault();
-    console.warn(formData);
 
     const flags = utils.getFlags(this.actor);
 

@@ -13,21 +13,21 @@ class ResetSettingsDialog extends FormApplication {
     super(...args);
     // eslint-disable-next-line no-constructor-return
     return new Dialog({
-      title: game.i18n.localize("GritNGlory.Dialogs.ResetSettings.Title"),
+      title: game.i18n.localize(`${CONSTANTS.MODULE_NAME}.Dialogs.ResetSettings.Title`),
       content: `<p class="GritNGlory-dialog-important">${game.i18n.localize(
         "GritNGlory.Dialogs.ResetSettings.Content"
       )}</p>`,
       buttons: {
         confirm: {
           icon: '<i class="fas fa-check"></i>',
-          label: game.i18n.localize("GritNGlory.Dialogs.ResetSettings.Confirm"),
+          label: game.i18n.localize(`${CONSTANTS.MODULE_NAME}.Dialogs.ResetSettings.Confirm`),
           callback: () => {
             resetSettings();
           },
         },
         cancel: {
           icon: '<i class="fas fa-times"></i>',
-          label: game.i18n.localize("GritNGlory.Dialogs.ResetSettings.Cancel"),
+          label: game.i18n.localize(`${CONSTANTS.MODULE_NAME}.Dialogs.ResetSettings.Cancel`),
         },
       },
       default: "cancel",

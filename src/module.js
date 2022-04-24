@@ -13,8 +13,8 @@ Hooks.once("init", () => {
 
 Hooks.once("ready", () => {
   if (!game.modules.get("lib-wrapper")?.active && game.user.isGM) {
-    ui.notifications.error(`Module ${CONSTANTS.MODULE_FULL_NAME} requires the 'libWrapper' module. Please install and activate it.`);
-    logger.error(`Module ${CONSTANTS.MODULE_FULL_NAME} requires the 'libWrapper' module. Please install and activate it.`);
+    ui.notifications.error(`Module ${game.i18n.localize("GritNGlory.ModuleName")} requires the 'libWrapper' module. Please install and activate it.`);
+    logger.error(`Module ${game.i18n.localize("GritNGlory.ModuleName")} requires the 'libWrapper' module. Please install and activate it.`);
   } else {
     logger.debug("Registering libWrapper wrappers");
     registerLibwrappers();
@@ -26,10 +26,8 @@ Hooks.once("ready", () => {
       registerSheetButton();
     }
 
-    // TODO: hit dice on long rest to remove open wounds
+    // TO DO: hit dice on long rest to remove open wounds
 
     registerWindowFunctions();
   }
 });
-
-// TODO: Tables for injury

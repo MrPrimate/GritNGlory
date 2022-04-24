@@ -133,7 +133,7 @@ const utils = {
         for (const damage of update.damageItem.damageDetail[0]) {
           // immune?
           if (!diValues.includes(damage.type)) {
-            tokens[damage.type] += 1;
+            tokens[damage.type] = 1;
           }
         }
       } else {
