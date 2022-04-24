@@ -35,7 +35,9 @@ async function preUpdateActorHook(actor, update) {
   if (!woundsEnabled) return;
 
   // is bleeding damage?
-  const isBleedingDamage = update.flags?[CONSTANTS.FLAG_NAME]?.bleedingUpdate === `${game.combat.id}${game.combat.current.round}${game.combat.current.turn}`;
+  const bleedingFlag = update.flags && update.flags[CONSTANTS.FLAG_NAME]?.bleedingUpdate;
+  const bleedingUpdateValue = `${game.combat.id}${game.combat.current.round}${game.combat.current.turn}`;
+  const isBleedingDamage = bleedingFlag === bleedingUpdateValue;
   if (isBleedingDamage) return;
   console.warn(actor);
   console.warn(update);

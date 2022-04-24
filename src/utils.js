@@ -92,7 +92,7 @@ const utils = {
   },
 
   injury: {
-    selectInjuryType: async (actor) => {
+    selectType: async (actor) => {
       const contentOptions = Object.entries(CONFIG.DND5E.damageTypes).map(([key, value]) => {
         return `<option value=${key}>${value}</option>`;
       }).join();
@@ -138,7 +138,7 @@ const utils = {
         }
       } else {
         logger.debug("Unable to parse damage type");
-        await utils.selectInjuryType(actor);
+        await utils.injury.selectType(actor);
       }
 
       return tokens;
