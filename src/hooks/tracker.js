@@ -102,6 +102,10 @@ async function deleteCombat(combat, changed) {
     }
     // TODO: injuries
     // check injury tokens and present roll dialog
+    // @Compendium[GritNGlory.gritnglory-tables.Severity 1: One Injury Token]{Severity 1}
+    // @Compendium[GritNGlory.gritnglory-tables.Severity 2: Two Injury Tokens]{Severity 2}
+    // @Compendium[GritNGlory.gritnglory-tables.Severity 3: Three Injury Tokens]{Severity 3}
+    // @Compendium[GritNGlory.gritnglory-tables.Severity 4: Four or more Injury Tokens]{Severity 4}
   }
 
 }
