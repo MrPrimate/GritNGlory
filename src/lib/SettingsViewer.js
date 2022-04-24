@@ -11,7 +11,7 @@ export class SettingsViewer extends FormApplication {
   static get defaultOptions() {
     const options = super.defaultOptions;
     options.title = game.i18n.localize(`${CONSTANTS.MODULE_NAME}.Dialogs.CharacterSettings.Title`);
-    options.template = `modules/${CONSTANTS.MODULE_NAME}/templates/settings-viewer.hbs`;
+    options.template = `${CONSTANTS.PATH}/templates/settings-viewer.hbs`;
     options.classes = ["gng", "sheet"];
     options.width = 300;
     return options;

@@ -50,6 +50,6 @@ CONSTANTS.DEFAULT_SETTINGS = {
 
 };
 
-CONSTANTS.PATH = `modules/${CONSTANTS.MODULE_NAME}/`;
+CONSTANTS.PATH = `modules/${CONSTANTS.MODULE_NAME.toLowerCase()}/`;
 
 export default CONSTANTS;

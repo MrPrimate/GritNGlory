@@ -5,6 +5,6 @@ const version = JSON.parse(fs.readFileSync('package.json', 'utf8')).version;
 var mod = JSON.parse(fs.readFileSync('module-template.json', 'utf8'));
 
 mod.version = version;
-mod.download = `https://github.com/mrprimate/GritNGlory/releases/download/${version}/GritNGlory.zip`;
+mod.download = `https://github.com/mrprimate/GritNGlory/releases/download/${version}/gritnglory.zip`;
 
 console.log(JSON.stringify(mod));

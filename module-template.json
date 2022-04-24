@@ -1,10 +1,10 @@
 {
-  "name": "GritNGlory",
+  "name": "gritnglory",
   "title": "Grit & Glory",
   "license": "MIT License",
   "description": "A module to implement Grit & Glory optional rules from https://www.reddit.com/r/gritandglory5e/comments/empff0/grit_and_glory_v6_100_pages_of_dd_5e_rules_for/",
   "version": "VERSION",
-  "download": "https://github.com/mrprimate/GritNGlory/releases/download/VERSION/GritNGlory.zip",
+  "download": "https://github.com/mrprimate/GritNGlory/releases/download/VERSION/gritnglory.zip",
   "manifest": "https://github.com/mrprimate/GritNGlory/releases/download/latest/module.json",
   "readme": "https://github.com/MrPrimate/GritNGlory/blob/main/README.md",
   "changelog": "https://github.com/MrPrimate/GritNGlory/blob/main/CHANGELOG.md",
