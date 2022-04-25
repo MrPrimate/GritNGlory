@@ -57,7 +57,7 @@ async function updateCombat(combat, changed) {
           flags.bleeding = true;
 
           const i18nData = { actorName: character.actor.name, number: flags.openWounds.combat };
-          const content = game.i18n.format(`${CONSTANTS.FLAG_NAME}.Chat.Bleeding.IsNow`, i18nData)
+          const content = game.i18n.format(`${CONSTANTS.FLAG_NAME}.Chat.Bleeding.IsNow`, i18nData);
           logger.info(content);
           ChatMessage.create({ content });
 
