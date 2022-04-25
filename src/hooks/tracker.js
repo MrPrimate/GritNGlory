@@ -14,7 +14,7 @@ function isTurnChange(combat, changed) {
 async function confirmationRoll(actor) {
   const dc = 12 + (utils.getFlags(actor).woundRisks * 2);
   const data = {
-    name: game.i18n.localize(`${CONSTANTS.MODULE_NAME}.Chat.ConfirmationRoll`),
+    name: game.i18n.localize(`${CONSTANTS.FLAG_NAME}.Chat.ConfirmationRoll`),
     type: "feat",
     data: {
       "activation.type": "special",
@@ -51,14 +51,19 @@ async function updateCombat(combat, changed) {
         // eslint-disable-next-line no-await-in-loop
         const result = await confirmationRoll(character.actor);
 
-        if (result.failure) {
+        if ([...result.failedSaves].length > 0) {
           flags.openWounds.combat += 1;
           flags.openWounds.total += 1;
           flags.bleeding = true;
 
+          const i18nData = { actorName: character.actor.name, number: flags.openWounds.combat };
+          const content = game.i18n.format(`${CONSTANTS.FLAG_NAME}.Chat.Bleeding.IsNow`, i18nData)
+          logger.info(content);
+          ChatMessage.create({ content });
+
           // eslint-disable-next-line max-depth
           if ((result.item.data.data.save.dc - result.saveResults[0]._total) >= 10) {
-            flags.injury.tokens.bleeding += 1;
+            flags.injury.tokens["piercing"] += 1;
           }
         }
 
@@ -70,7 +75,7 @@ async function updateCombat(combat, changed) {
       if (combat.current.combatantId === character.id && flags.bleeding) {
         logger.debug(`Bleeding check for ${character.actor.name}`);
         const i18nData = { actorName: character.actor.name, number: flags.openWounds.combat };
-        const content = game.i18n.format(`${CONSTANTS.MODULE_NAME}.Chat.Bleeding.Damage`, i18nData);
+        const content = game.i18n.format(`${CONSTANTS.FLAG_NAME}.Chat.Bleeding.Damage`, i18nData);
         logger.info(content);
         ChatMessage.create({ content });
         let bleedingData = {
@@ -106,13 +111,13 @@ function injuryTokenResolution(actor, flags) {
           break;
       }
       const i18nData = { type: CONFIG.DND5E.damageTypes[key], tableName: tableName, number: tokenValue };
-      const i18nResult = game.i18n.format(`${CONSTANTS.MODULE_NAME}.Chat.Injury.TokenResolutionType`, i18nData);
+      const i18nResult = game.i18n.format(`${CONSTANTS.FLAG_NAME}.Chat.Injury.TokenResolutionType`, i18nData);
       contentBody += `<li> ${i18nResult}</li>`;
     }
     flags.injury.tokens[key] = 0;
   }
   if (contentBody !== "") {
-    const contentHeading = game.i18n.format(`${CONSTANTS.MODULE_NAME}.Chat.Injury.TokenResolutionHeading`, { actorName: actor.name });
+    const contentHeading = game.i18n.format(`${CONSTANTS.FLAG_NAME}.Chat.Injury.TokenResolutionHeading`, { actorName: actor.name });
     const content = `<h3>${contentHeading}</h3><p><ul>${contentBody}</ul></p>`;
     logger.debug(content);
     ChatMessage.create({ content });
