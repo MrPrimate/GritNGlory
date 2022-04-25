@@ -4,7 +4,7 @@
     "Settings": {
       "Reset": {
         "Title": "Reset settings to default",
-        "Label": "Reset Rest Recovery Settings",
+        "Label": "Reset Grit & Glory Settings",
         "Hint": "This will reset all of the module's settings back to their defaults."
       },
       "EnableWounds": {
@@ -48,7 +48,8 @@
         "TokensUnknown": "They take an injury token for an unknown damage type."
       },
       "Bleeding": {
-        "Damage": "{actorName} has suffered {number} bleeding damage."
+        "Damage": "{actorName} has suffered {number} bleeding damage.",
+        "IsNow": "{actorName} is bleeding and will take {number} damage at the beginning of their turn."
       },
       "ConfirmationRoll": "Confirmation Roll",
       "Wounds": {

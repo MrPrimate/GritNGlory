@@ -13,21 +13,21 @@ class ResetSettingsDialog extends FormApplication {
     super(...args);
     // eslint-disable-next-line no-constructor-return
     return new Dialog({
-      title: game.i18n.localize(`${CONSTANTS.MODULE_NAME}.Dialogs.ResetSettings.Title`),
-      content: `<p class="GritNGlory-dialog-important">${game.i18n.localize(
-        "GritNGlory.Dialogs.ResetSettings.Content"
+      title: game.i18n.localize(`${CONSTANTS.FLAG_NAME}.Dialogs.ResetSettings.Title`),
+      content: `<p class="${CONSTANTS.FLAG_NAME}-dialog-important">${game.i18n.localize(
+        `${CONSTANTS.FLAG_NAME}.Dialogs.ResetSettings.Content`
       )}</p>`,
       buttons: {
         confirm: {
           icon: '<i class="fas fa-check"></i>',
-          label: game.i18n.localize(`${CONSTANTS.MODULE_NAME}.Dialogs.ResetSettings.Confirm`),
+          label: game.i18n.localize(`${CONSTANTS.FLAG_NAME}.Dialogs.ResetSettings.Confirm`),
           callback: () => {
             resetSettings();
           },
         },
         cancel: {
           icon: '<i class="fas fa-times"></i>',
-          label: game.i18n.localize(`${CONSTANTS.MODULE_NAME}.Dialogs.ResetSettings.Cancel`),
+          label: game.i18n.localize(`${CONSTANTS.FLAG_NAME}.Dialogs.ResetSettings.Cancel`),
         },
       },
       default: "cancel",
@@ -37,9 +37,9 @@ class ResetSettingsDialog extends FormApplication {
 
 export function registerSettings() {
   game.settings.registerMenu(CONSTANTS.MODULE_NAME, "resetToDefaults", {
-    name: "GritNGlory.Settings.Reset.Title",
-    label: "GritNGlory.Settings.Reset.Label",
-    hint: "GritNGlory.Settings.Reset.Hint",
+    name: `${CONSTANTS.FLAG_NAME}.Settings.Reset.Title`,
+    label: `${CONSTANTS.FLAG_NAME}.Settings.Reset.Label`,
+    hint: `${CONSTANTS.FLAG_NAME}.Settings.Reset.Hint`,
     icon: "fas fa-refresh",
     type: ResetSettingsDialog,
     restricted: true,

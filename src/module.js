@@ -13,8 +13,9 @@ Hooks.once("init", () => {
 
 Hooks.once("ready", () => {
   if (!game.modules.get("lib-wrapper")?.active && game.user.isGM) {
-    ui.notifications.error(`Module ${game.i18n.localize("GritNGlory.ModuleName")} requires the 'libWrapper' module. Please install and activate it.`);
-    logger.error(`Module ${game.i18n.localize("GritNGlory.ModuleName")} requires the 'libWrapper' module. Please install and activate it.`);
+    const moduleName = game.i18n.localize(`${CONSTANTS.FLAG_NAME}.ModuleName`);
+    ui.notifications.error(`Module ${moduleName} requires the 'libWrapper' module. Please install and activate it.`);
+    logger.error(`Module ${moduleName} requires the 'libWrapper' module. Please install and activate it.`);
   } else {
     logger.debug("Registering libWrapper wrappers");
     registerLibwrappers();

@@ -1,7 +1,7 @@
 const debouncedReload = foundry.utils.debounce(() => window.location.reload(), 100);
 
 const CONSTANTS = {
-  MODULE_NAME: "GritNGlory",
+  MODULE_NAME: "gritnglory",
   FLAG_NAME: "GritNGlory",
   SETTINGS: {
     // Enable options
@@ -22,8 +22,8 @@ const CONSTANTS = {
 CONSTANTS.DEFAULT_SETTINGS = {
   // Enable options
   [CONSTANTS.SETTINGS.ENABLE_WOUNDS]: {
-    name: "GritNGlory.Settings.EnableWounds.Name",
-    hint: "GritNGlory.Settings.EnableWounds.Hint",
+    name: `${CONSTANTS.FLAG_NAME}.Settings.EnableWounds.Name`,
+    hint: `${CONSTANTS.FLAG_NAME}.Settings.EnableWounds.Hint`,
     scope: "world",
     config: true,
     type: Boolean,
@@ -33,23 +33,23 @@ CONSTANTS.DEFAULT_SETTINGS = {
 
   // debug
   [CONSTANTS.SETTINGS.LOG_LEVEL]: {
-    name: "GritNGlory.Settings.LogLevel.Name",
-    hint: "GritNGlory.Settings.LogLevel.Hint",
+    name: `${CONSTANTS.FLAG_NAME}.Settings.LogLevel.Name`,
+    hint: `${CONSTANTS.FLAG_NAME}.Settings.LogLevel.Hint`,
     scope: "world",
     config: true,
     type: String,
     choices: {
-      DEBUG: "GritNGlory.Settings.LogLevel.debug",
-      INFO: "GritNGlory.Settings.LogLevel.info",
-      WARN: "GritNGlory.Settings.LogLevel.warn",
-      ERR: "GritNGlory.Settings.LogLevel.error",
-      OFF: "GritNGlory.Settings.LogLevel.off",
+      DEBUG: `${CONSTANTS.FLAG_NAME}.Settings.LogLevel.debug`,
+      INFO: `${CONSTANTS.FLAG_NAME}.Settings.LogLevel.info`,
+      WARN: `${CONSTANTS.FLAG_NAME}.Settings.LogLevel.warn`,
+      ERR: `${CONSTANTS.FLAG_NAME}.Settings.LogLevel.error`,
+      OFF: `${CONSTANTS.FLAG_NAME}.Settings.LogLevel.off`,
     },
     default: "WARN",
   }
 
 };
 
-CONSTANTS.PATH = `modules/${CONSTANTS.MODULE_NAME.toLowerCase()}/`;
+CONSTANTS.PATH = `modules/${CONSTANTS.MODULE_NAME}/`;
 
 export default CONSTANTS;
