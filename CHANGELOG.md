@@ -1,3 +1,7 @@
+# 0.0.3
+
+- Icon in title bar now has title on hover.
+
 # 0.0.2
 
 - Confirmation roll failures did not increase the correct counters.

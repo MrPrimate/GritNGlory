@@ -2,6 +2,7 @@ const debouncedReload = foundry.utils.debounce(() => window.location.reload(), 1
 
 const CONSTANTS = {
   MODULE_NAME: "gritnglory",
+  MODULE_FULL_NAME: "Grit & Glory",
   FLAG_NAME: "GritNGlory",
   SETTINGS: {
     // Enable options
